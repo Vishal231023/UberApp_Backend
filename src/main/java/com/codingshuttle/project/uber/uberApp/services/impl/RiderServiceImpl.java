@@ -6,8 +6,11 @@ import com.codingshuttle.project.uber.uberApp.dto.RideRequestDto;
 import com.codingshuttle.project.uber.uberApp.dto.RiderDto;
 import com.codingshuttle.project.uber.uberApp.entities.Driver;
 import com.codingshuttle.project.uber.uberApp.entities.RideRequest;
+import com.codingshuttle.project.uber.uberApp.entities.Rider;
+import com.codingshuttle.project.uber.uberApp.entities.User;
 import com.codingshuttle.project.uber.uberApp.entities.enums.RideRequestStatus;
 import com.codingshuttle.project.uber.uberApp.repositories.RideRequestRepository;
+import com.codingshuttle.project.uber.uberApp.repositories.RiderRepository;
 import com.codingshuttle.project.uber.uberApp.services.RiderService;
 import com.codingshuttle.project.uber.uberApp.strategies.DriverMatchingStrategy;
 import com.codingshuttle.project.uber.uberApp.strategies.RideFareCalculationStrategy;
@@ -27,6 +30,7 @@ public class RiderServiceImpl implements RiderService {
     private final RideFareCalculationStrategy rideFareCalculationStrategy;
     private final DriverMatchingStrategy driverMatchingStrategy;
     private final RideRequestRepository rideRequestRepository;
+    private final RiderRepository riderRepository;
     @Override
     public RideRequestDto requestRide(RideRequestDto rideRequestDto) {
         RideRequest rideRequest = modelMapper.map(rideRequestDto, RideRequest.class);
@@ -41,7 +45,7 @@ public class RiderServiceImpl implements RiderService {
         driverMatchingStrategy.findMatchingDriver(rideRequest);
 
 
-        return modelMapper.map(rideRequest,RideRequestDto.class);
+        return modelMapper.map(savedRideRequest,RideRequestDto.class);
     }
 
     @Override
@@ -62,5 +66,16 @@ public class RiderServiceImpl implements RiderService {
     @Override
     public List<RideDto> getAllMyRides() {
         return List.of();
+    }
+
+    @Override
+    public Rider createANewRider(User user) {
+        Rider rider = Rider
+                .builder()
+                .user(user)
+                .rating(0.0)
+                .build();
+
+        return  riderRepository.save(rider);
     }
 }
