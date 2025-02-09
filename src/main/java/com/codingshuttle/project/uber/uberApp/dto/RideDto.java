@@ -3,7 +3,6 @@ package com.codingshuttle.project.uber.uberApp.dto;
 import com.codingshuttle.project.uber.uberApp.entities.enums.PaymentMethod;
 import com.codingshuttle.project.uber.uberApp.entities.enums.RideStatus;
 import lombok.Data;
-import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
 

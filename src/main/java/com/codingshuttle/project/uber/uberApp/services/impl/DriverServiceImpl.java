@@ -11,16 +11,15 @@ import com.codingshuttle.project.uber.uberApp.entities.enums.RideStatus;
 import com.codingshuttle.project.uber.uberApp.exceptions.ResourceNotFoundException;
 import com.codingshuttle.project.uber.uberApp.repositories.DriverRepository;
 import com.codingshuttle.project.uber.uberApp.services.DriverService;
+import com.codingshuttle.project.uber.uberApp.services.PaymentService;
 import com.codingshuttle.project.uber.uberApp.services.RideRequestService;
 import com.codingshuttle.project.uber.uberApp.services.RideService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 import java.time.LocalDateTime;
 
@@ -33,6 +32,7 @@ public class DriverServiceImpl implements DriverService {
     private final DriverRepository driverRepository;
     private final RideService rideService;
     private final ModelMapper modelMapper;
+    private final PaymentService paymentService;
 
 
     @Override
@@ -98,14 +98,34 @@ public class DriverServiceImpl implements DriverService {
 
         Ride savedRide = rideService.updateRideStatus(ride,RideStatus.ONGOING);
 
+        paymentService.createPayment(ride);
+
 
 
         return modelMapper.map(savedRide, RideDto.class);
     }
 
     @Override
+    @Transactional
     public RideDto endRide(Long rideId) {
-        return null;
+        Ride ride = rideService.getRideById(rideId);
+
+        Driver currentDriver = getCurrentDriver();
+        if(!currentDriver.equals(ride.getDriver())){
+            throw new RuntimeException("Driver cannot start the ride, as he has not accepted the ride earlier");
+        }
+
+        if(!ride.getRideStatus().equals(RideStatus.ONGOING)){
+            throw new RuntimeException("Ride Status is not ongoing, hence cannot start the ride" + ride.getRideStatus());
+        }
+        ride.setEndedAt(LocalDateTime.now());
+        Ride savedRide = rideService.updateRideStatus(ride,RideStatus.ENDED);
+        updateDriverAvailability(currentDriver,true);
+
+        paymentService.processPayment(ride);
+
+        return modelMapper.map(ride,RideDto.class);
+
     }
 
     @Override
@@ -126,7 +146,7 @@ public class DriverServiceImpl implements DriverService {
     public Page<RideDto> getAllMyRides(PageRequest pageRequest) {
         Driver currentDriver = getCurrentDriver();
 
-        return rideService.getAllRidesOfDriver(currentDriver.getId(),pageRequest)
+        return rideService.getAllRidesOfDriver(currentDriver,pageRequest)
                 .map(ride -> modelMapper.map(ride, RideDto.class));
 
     }

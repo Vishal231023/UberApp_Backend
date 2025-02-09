@@ -95,7 +95,7 @@ public class RiderServiceImpl implements RiderService {
     public Page<RideDto> getAllMyRides(PageRequest pageRequest) {
         Rider currentRider = getCurrentRider();
 
-        return rideService.getAllRidesOfRider(currentRider.getId(),pageRequest)
+        return rideService.getAllRidesOfRider(currentRider,pageRequest)
                 .map(ride -> modelMapper.map(ride, RideDto.class));
     }
 
