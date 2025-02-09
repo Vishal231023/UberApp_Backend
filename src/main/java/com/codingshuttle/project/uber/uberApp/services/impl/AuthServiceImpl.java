@@ -13,8 +13,8 @@ import com.codingshuttle.project.uber.uberApp.services.RiderService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -30,25 +30,25 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public UserDto signup(SignupDto signupDto) {
-      User user = userRepository.findByEmail(signupDto.getEmail())
-              .orElse(null);
-      if(user != null){
-          throw new RuntimeConflictException("Cannot signup, User is already  exists with email "+ signupDto.getEmail());
+        User user = userRepository.findByEmail(signupDto.getEmail())
+                .orElse(null);
+        if (user != null) {
+            throw new RuntimeConflictException("Cannot signup, User is already  exists with email " + signupDto.getEmail());
 
-      }
+        }
 
-        User mappedUser = modelMapper.map(signupDto,User.class);
+        User mappedUser = modelMapper.map(signupDto, User.class);
         mappedUser.setRoles(Set.of(Role.RIDER));
 
         User savedUser = userRepository.save(mappedUser);
 
         //create user related things, like rider profile and wallet
-        Rider rider =riderService.createANewRider(savedUser);
+        Rider rider = riderService.createANewRider(savedUser);
         //  TODO add wallet related service here
 
         return modelMapper.map(savedUser, UserDto.class);
-
 
 
     }

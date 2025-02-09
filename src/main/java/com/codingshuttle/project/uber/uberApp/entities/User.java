@@ -2,7 +2,6 @@ package com.codingshuttle.project.uber.uberApp.entities;
 
 import com.codingshuttle.project.uber.uberApp.entities.enums.Role;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 

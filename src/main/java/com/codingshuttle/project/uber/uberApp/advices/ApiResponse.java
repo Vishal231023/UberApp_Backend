@@ -1,6 +1,5 @@
 package com.codingshuttle.project.uber.uberApp.advices;
 
-import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
