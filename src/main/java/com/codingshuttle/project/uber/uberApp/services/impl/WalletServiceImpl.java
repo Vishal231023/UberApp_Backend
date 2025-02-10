@@ -56,10 +56,11 @@ public class WalletServiceImpl implements WalletService {
                 .transactionId(transactionId)
                 .ride(ride)
                 .wallet(wallet)
-                .transactionType(TransactionType.CREDIT)
+                .transactionType(TransactionType.DEBIT)
                 .transactionMethod(transactionMethod)
                 .amount(amount)
                 .build();
+
         walletTransactionService.createNewWalletTransaction(walletTransaction);
         return walletRepository.save(wallet);
     }

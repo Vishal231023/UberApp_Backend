@@ -44,3 +44,7 @@ INSERT INTO driver (id, user_id, rating, available, current_location) VALUES
 (8, 8, 4.2, true, ST_GeomFromText('POINT(73.8567 18.5204)', 4326)), -- Pune
 (9, 9, 4.7, false, ST_GeomFromText('POINT(76.7794 30.7333)', 4326)), -- Chandigarh
 (10, 10, 4.8, true, ST_GeomFromText('POINT(77.2310 28.6129)', 4326)); -- India Gate, Delhi
+
+INSERT INTO wallet (id, user_id, balance) VALUES
+(1, 1, 100),
+(2,2,500);

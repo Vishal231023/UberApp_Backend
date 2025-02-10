@@ -21,11 +21,12 @@ public class WalletTransaction {
 
     private Double amount;
 
+    @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
 
     private TransactionMethod transactionMethod;
 
-    @OneToOne
+    @ManyToOne
     private Ride ride;
 
     private String transactionId;
